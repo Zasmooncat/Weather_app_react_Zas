@@ -162,7 +162,7 @@ const Home = () => {
 									className="form-control"
 									id="city"
 									name="city"
-									placeholder="Escribe la ciudad"
+									placeholder="Escribe el nombre de la ciudad"
 									onChange={handleChange}
 									value={searchWeather.city} />
 							</div>
@@ -171,7 +171,12 @@ const Home = () => {
 					</div>
 					<div className="seccion2 col-11 col-md-4 m-2 p-3 d-flex items-center">
 
-						{!weather ? "Consulta el tiempo en tu ciudad" :
+						{!weather ? 
+						
+						<div className=" w-100 d-flex justify-content-center" >
+							Consulta el tiempo en tu ciudad
+						</div> 
+						 :
 							weather.cod === "404" ? <p className="error-message">No existe ninguna ciudad con ese nombre en {lastCountry}</p> :
 								<>
 									<div className="tempPanel animate__animated animate__fadeIn d-flex flex-column">
