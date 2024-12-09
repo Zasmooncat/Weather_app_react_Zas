@@ -3,6 +3,7 @@ import cloudyVideo from "../../../src/img/cloudy.mp4";
 import { faSun, faCloudSun, faCloud, faCloudRain, } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import 'animate.css';
+import Swal from 'sweetalert2'
 
 
 const URL_BASE = "https://api.openweathermap.org/data/2.5/weather?&appid=08f90cb685ac696606f04d9cafa1ddc4&units=metric&lang=es"
@@ -19,6 +20,7 @@ const Home = () => {
 
 	const [weather, setWeather] = useState(null)
 	const [cities, setCities] = useState([])
+	const [lastCountry, setLastCountry] = useState("");
 
 	const handleChange = (event) => {
 		setSearchWeather({
@@ -27,33 +29,60 @@ const Home = () => {
 		});
 	}
 	const handleSubmit = async (event) => {
-		event.preventDefault()
+		event.preventDefault();
 
 		try {
 			if (searchWeather.city.trim() === "" || searchWeather.country.trim() === "") {
-				console.log("campos vacíos"); //SWEET ALERT AQUI FORMIK?
-				return
+				console.log("campos vacíos");
+				Swal.fire({
+					title: "Selecciona un país y una ciudad",
+					confirmButtonColor: 'rgb(35, 64, 119)',					
+					showClass: {
+						popup: `
+						animate__animated
+						animate__fadeInUp
+						animate__faster
+					  `
+					},
+					hideClass: {
+						popup: `
+						animate__animated
+						animate__fadeOutDown
+						animate__faster
+					  `
+					}
+				});;
+				
+				return;
 			}
-			// const response = await fetch(`${URL_BASE}&q=${searchWeather.city},${searchWeather.country}`)
+
+			setLastCountry(searchWeather.country);
+
 			const url = `${URL_BASE}&q=${searchWeather.city},${searchWeather.country}`;
 			console.log("URL generada:", url);
+
 			const response = await fetch(url);
+			const data = await response.json();
 
-			if (!response) {
-				throw new Error("no se recibieron los datos")
+			if (data.cod === "404" || !data.weather) {
+				console.log("Ciudad o país no encontrados");
+				setWeather({ cod: "404" }); // Establece el estado para manejar el error
+				return;
 			}
-			const data = await response.json()
-			console.log(data);
 
-			setWeather(data)
-
-
+			setWeather(data); // Establece el clima si la respuesta es correcta
 		} catch (error) {
-			console.log(error.message);
-
+			console.error("Error al consultar el clima:", error.message);
+		} finally {
+			// Resetea los campos después de realizar la consulta
+			setSearchWeather({
+				city: "",
+				country: ""
+			});
 		}
 
-	}
+
+	};
 
 	const weatherIcons = {
 		"soleado": faSun,
@@ -65,8 +94,8 @@ const Home = () => {
 		"lluvioso": faCloudRain,
 	};
 
-	const weatherDescription = weather?.weather[0]?.description.toLowerCase();
-	const weatherIcon = weatherIcons[weatherDescription] || faCloud; // Por defecto, muestra una nube.
+	const weatherDescription = Array.isArray(weather?.weather) && weather?.weather[0]?.description.toLowerCase();
+	const weatherIcon = weatherDescription ? weatherIcons[weatherDescription] : faCloud; // Por defecto, muestra una nube.
 
 	const windIcons = {
 		"soleado": faSun,
@@ -99,13 +128,15 @@ const Home = () => {
 					<div className="seccion1 col-11 col-md-4 m-2 p-3">
 						<form
 							onSubmit={handleSubmit}>
-							
+
 							<div className="form-group mt-2">
 								<label htmlFor="country">País:</label>
 								<select className="form-control"
 									id="country"
 									name="country"
-									onChange={handleChange}>
+									onChange={handleChange}
+									value={searchWeather.country}
+								>
 									<option value="">Selecciona el país</option>
 									<option value="ES">España</option>
 									<option value="GB">Reino Unido</option>
@@ -132,7 +163,8 @@ const Home = () => {
 									id="city"
 									name="city"
 									placeholder="Escribe la ciudad"
-									onChange={handleChange} />
+									onChange={handleChange}
+									value={searchWeather.city} />
 							</div>
 							<button className="boton w-100 mt-4">Consultar</button>
 						</form>
@@ -140,30 +172,30 @@ const Home = () => {
 					<div className="seccion2 col-11 col-md-4 m-2 p-3 d-flex items-center">
 
 						{!weather ? "Consulta el tiempo en tu ciudad" :
-							weather.cod === "404" ? "Valida la ciudad y el país" :
+							weather.cod === "404" ? <p className="error-message">No existe ninguna ciudad con ese nombre en {lastCountry}</p> :
 								<>
 									<div className="tempPanel animate__animated animate__fadeIn d-flex flex-column">
 										<p className="temp p-2 mx-5 ">
 											{Math.ceil(weather?.main?.temp)}ºC
 										</p>
 										<div className="m-auto">
-										<p className="tempicon">
+											<p className="tempicon">
 
-											<FontAwesomeIcon icon={weatherIcon} className="mx-2" />
-										</p>
+												<FontAwesomeIcon icon={weatherIcon} className="mx-2" />
+											</p>
 										</div>
 									</div>
 									<div className="animate__animated animate__fadeIn">
 
 										<div>
-											<h2 className="infotitulo">{weather?.name}</h2>
+											<h2 className="infotitulo">{weather?.name || "des"}</h2>
 
 										</div>
 
 										<div className="info">
 
 											<p>
-												{weatherDescription}
+												{weatherDescription || "sin información"}
 
 											</p>
 											<p >
