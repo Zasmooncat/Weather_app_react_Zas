@@ -194,24 +194,24 @@ const Home = () => {
 
 										<div className="info">
 
-											<p>
+											<p className="my-1">
 												{weatherDescription || "sin información"}
 
 											</p>
-											<p >
+											<p  className="my-1">
 												<span>Temp-max:</span> {Math.ceil(weather?.main?.temp_max)}ºC
 											</p>
-											<p>
+											<p className="my-1">
 												<span>Temp-min:</span> {Math.ceil(weather?.main?.temp_min)}ºC
 											</p>
-											<p>
+											<p className="my-1">
 												<span>Sensación térmica:</span> {Math.ceil(weather?.main?.feels_like)}ºC
 											</p>
-											<p>
+											<p className="my-1">
 												<span>Humedad:</span> {Math.ceil(weather?.main?.humidity)}%
 											</p>
 
-											<p>
+											<p className="my-1">
 												<span>Viento:</span> {Math.ceil(weather?.wind?.speed)}km/h
 											</p>
 
