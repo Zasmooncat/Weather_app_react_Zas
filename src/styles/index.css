@@ -80,11 +80,21 @@
   }
 
 .info{
-  color:rgb(35, 64, 119)
+  color:rgb(35, 64, 119);
+  font-family: 'Times New Roman', Times, serif;
+  
 }
 
 .infotitulo{
-  color: aliceblue;
+  color: rgb(255, 255, 255);
+}
+
+.form-control::placeholder{
+  color:rgb(162, 187, 196)
+}
+
+.form-control{
+  color:rgb(162, 187, 196)
 }
     
 

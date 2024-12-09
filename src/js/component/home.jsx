@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import cloudyVideo from "../../../src/img/cloudy.mp4";
-import { faSun, faCloudSun, faCloud, faCloudRain } from "@fortawesome/free-solid-svg-icons";
+import { faSun, faCloudSun, faCloud, faCloudRain, } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import 'animate.css';
 
 
 const URL_BASE = "https://api.openweathermap.org/data/2.5/weather?&appid=08f90cb685ac696606f04d9cafa1ddc4&units=metric&lang=es"
+const GEO_DB_API_URL = "https://wft-geo-db.p.rapidapi.com/v1/geo/countries";
 
-//create your first component
+
+
 const Home = () => {
 
 	const [searchWeather, setSearchWeather] = useState({
@@ -15,12 +18,13 @@ const Home = () => {
 	})
 
 	const [weather, setWeather] = useState(null)
+	const [cities, setCities] = useState([])
 
 	const handleChange = (event) => {
 		setSearchWeather({
 			...searchWeather,
 			[event.target.name]: event.target.value
-		})
+		});
 	}
 	const handleSubmit = async (event) => {
 		event.preventDefault()
@@ -64,6 +68,19 @@ const Home = () => {
 	const weatherDescription = weather?.weather[0]?.description.toLowerCase();
 	const weatherIcon = weatherIcons[weatherDescription] || faCloud; // Por defecto, muestra una nube.
 
+	const windIcons = {
+		"soleado": faSun,
+		"cielo claro": faSun,
+		"algo de nubes": faCloudSun,
+		"nubes dispersas": faCloudSun,
+		"muy nuboso": faCloud,
+		"lluvia ligera": faCloudRain,
+		"lluvioso": faCloudRain,
+	};
+
+	const windDescription = weather?.wind?.dg;
+	const wIcon = windIcons[windDescription] || faCloud;
+
 
 
 	return (
@@ -82,22 +99,14 @@ const Home = () => {
 					<div className="seccion1 col-11 col-md-4 m-2 p-3">
 						<form
 							onSubmit={handleSubmit}>
-							<div className="form-group">
-								<label htmlFor="city">Ciudad:</label>
-								<input
-									type="text"
-									className="form-control"
-									id="city"
-									name="city"
-									onChange={handleChange} />
-							</div>
+							
 							<div className="form-group mt-2">
 								<label htmlFor="country">País:</label>
 								<select className="form-control"
 									id="country"
 									name="country"
 									onChange={handleChange}>
-									<option value=""></option>
+									<option value="">Selecciona el país</option>
 									<option value="ES">España</option>
 									<option value="GB">Reino Unido</option>
 									<option value="FR">Francia</option>
@@ -110,11 +119,20 @@ const Home = () => {
 									<option value="VE">Venezuela</option>
 									<option value="BR">Brasil</option>
 									<option value="US">Estados Unidos</option>
-									<option value="CN">"Canadá</option>
+									<option value="CN">Canadá</option>
 									<option value="AU">Australia</option>
-									<option value="NZ">Nueva Zelanda</option>
 									<option value="JP">Japón</option>
 								</select>
+							</div>
+							<div className="form-group">
+								<label htmlFor="city">Ciudad:</label>
+								<input
+									type="text"
+									className="form-control"
+									id="city"
+									name="city"
+									placeholder="Escribe la ciudad"
+									onChange={handleChange} />
 							</div>
 							<button className="boton w-100 mt-4">Consultar</button>
 						</form>
@@ -124,7 +142,7 @@ const Home = () => {
 						{!weather ? "Consulta el tiempo en tu ciudad" :
 							weather.cod === "404" ? "Valida la ciudad y el país" :
 								<>
-									<div className="tempPanel d-flex flex-column">
+									<div className="tempPanel animate__animated animate__fadeIn d-flex flex-column">
 										<p className="temp p-2 mx-5 ">
 											{Math.ceil(weather?.main?.temp)}ºC
 										</p>
@@ -135,7 +153,7 @@ const Home = () => {
 										</p>
 										</div>
 									</div>
-									<div>
+									<div className="animate__animated animate__fadeIn">
 
 										<div>
 											<h2 className="infotitulo">{weather?.name}</h2>
