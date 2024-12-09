@@ -95,13 +95,14 @@ const Home = () => {
 	};
 
 	const weatherDescription = Array.isArray(weather?.weather) && weather?.weather[0]?.description.toLowerCase();
-	const weatherIcon = weatherDescription ? weatherIcons[weatherDescription] : faCloud; // Por defecto, muestra una nube.
+	const weatherIcon = weatherIcons[weatherDescription] || faCloud; // Por defecto, muestra una nube.
 
 	const windIcons = {
 		"soleado": faSun,
 		"cielo claro": faSun,
 		"algo de nubes": faCloudSun,
 		"nubes dispersas": faCloudSun,
+		"nubes": faCloud,
 		"muy nuboso": faCloud,
 		"lluvia ligera": faCloudRain,
 		"lluvioso": faCloudRain,
