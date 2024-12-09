@@ -180,8 +180,8 @@ const Home = () => {
 						 :
 							weather.cod === "404" ? <p className="error-message">No existe ninguna ciudad con ese nombre en {lastCountry}</p> :
 								<>
-									<div className="tempPanel animate__animated animate__fadeIn d-flex flex-column">
-										<p className="temp p-2 mx-5 ">
+									<div className="tempPanel col-6 animate__animated animate__fadeIn d-flex flex-column">
+										<p className="temp p-2 mx-5 d-flex justify-content-center">
 											{Math.ceil(weather?.main?.temp)}ºC
 										</p>
 										<div className="m-auto">
